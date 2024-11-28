@@ -89,7 +89,9 @@ class DrawingController extends AbstractController
         $entityManager->persist($drawing);
         $entityManager->flush();
 
-        return new JsonResponse($serializer->serialize($drawing, 'json'), Response::HTTP_OK, [], true);
+        $jsonDrawing = $serializer->serialize($drawing, 'json');
+
+        return new JsonResponse($jsonDrawing, Response::HTTP_OK, [], true);
     }
 
     #[Route('api/drawing/modify/{id}', name: 'app_modify_drawing', methods: ['PATCH'])]
@@ -118,6 +120,8 @@ class DrawingController extends AbstractController
         $entityManager->persist($drawing);
         $entityManager->flush();
 
-        return new JsonResponse($serializer->serialize($drawing, 'json'), Response::HTTP_OK, [], true);
+        $jsonDrawing = $serializer->serialize($drawing, 'json');
+
+        return new JsonResponse($jsonDrawing, Response::HTTP_OK, [], true);
     }
 }
