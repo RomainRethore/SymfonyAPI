@@ -58,12 +58,12 @@ class DrawingController extends AbstractController
     #[Route('api/drawing/create', name: 'app_create_drawing', methods: ['POST'])]
     public function create(EntityManagerInterface $entityManager, SerializerInterface $serializer, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $data = $serializer->deserialize($request->getContent(), Drawing::class, 'json');
 
         $drawing = new Drawing();
-        $drawing->setTitle($data['title']);
-        $drawing->setAuthor($data['author']);
-        $drawing->setImage($data['image']);
+        $drawing->setTitle($data->getTitle());
+        $drawing->setAuthor($data->getAuthor());
+        $drawing->setImage($data->getImage());
 
         $entityManager->persist($drawing);
         $entityManager->flush();
@@ -74,7 +74,7 @@ class DrawingController extends AbstractController
     #[Route('api/drawing/update/{id}', name: 'app_update_drawing', methods: ['PUT'])]
     public function update(DrawingRepository $drawingRepository, EntityManagerInterface $entityManager, SerializerInterface $serializer, int $id, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $data = $serializer->deserialize($request->getContent(), Drawing::class, 'json');
 
         $drawing = $drawingRepository->find($id);
 
@@ -82,9 +82,9 @@ class DrawingController extends AbstractController
             return new JsonResponse(['message' => 'Drawing not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $drawing->setTitle($data['title']);
-        $drawing->setAuthor($data['author']);
-        $drawing->setImage($data['image']);
+        $drawing->setTitle($data->getTitle());
+        $drawing->setAuthor($data->getAuthor());
+        $drawing->setImage($data->getImage());
 
         $entityManager->persist($drawing);
         $entityManager->flush();
@@ -97,7 +97,7 @@ class DrawingController extends AbstractController
     #[Route('api/drawing/modify/{id}', name: 'app_modify_drawing', methods: ['PATCH'])]
     public function modify(DrawingRepository $drawingRepository, EntityManagerInterface $entityManager, SerializerInterface $serializer, int $id, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $data = $serializer->deserialize($request->getContent(), Drawing::class, 'json');
 
         $drawing = $drawingRepository->find($id);
 
@@ -105,16 +105,16 @@ class DrawingController extends AbstractController
             return new JsonResponse(['message' => 'Drawing not found'], Response::HTTP_NOT_FOUND);
         }
 
-        if (isset($data['title'])) {
-            $drawing->setTitle($data['title']);
+        if ($data->getTitle()) {
+            $drawing->setTitle($data->getTitle());
         }
 
-        if (isset($data['author'])) {
-            $drawing->setAuthor($data['author']);
+        if ($data->getAuthor()) {
+            $drawing->setAuthor($data->getAuthor());
         }
 
-        if (isset($data['image'])) {
-            $drawing->setImage($data['image']);
+        if ($data->getImage()) {
+            $drawing->setImage($data->getImage());
         }
 
         $entityManager->persist($drawing);
